@@ -53,12 +53,13 @@ for(k in 1:episode_num)
   complete_stack = 0
   while(episode_reward_val == -time_step)
   {
+    complete_stack = complete_stack + 1
     episode_reward_val = reward_fun(client, instance_id, 
                                     beta_vec = beta_init, 
                                     time_step = time_step, 
                                     render_display = F, 
                                     break_option = break_option) %>% sum()
-    complete_stack = complete_stack + 1
+    cat(complete_stack, 'stack completed\n')
     if(complete_stack == complete_stack_lim) break
   }
   if(complete_stack == complete_stack_lim) break
