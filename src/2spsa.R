@@ -36,36 +36,6 @@ break_option = ifelse(time_step <=200, T, F)
 hess_k = diag(1, 4)
 for(k in 1:episode_num)
 {
-  ## Stopping rule
-  episode_reward_val = reward_fun(client, instance_id, 
-                                  beta_vec = beta_init, 
-                                  time_step = time_step, 
-                                  render_display = F, 
-                                  break_option = break_option) %>% sum()
-  
-  episode_reward_vec[k] = episode_reward_val
-  cat(k, 'step : ', episode_reward_val, '\n')  
-  if(min(episode_reward_vec) == episode_reward_val)
-  {
-    beta_star = beta_init
-  }else{
-    beta_init = beta_star
-  }
-  
-  complete_stack = 0
-  while(episode_reward_val == -time_step)
-  {
-    complete_stack = complete_stack + 1
-    episode_reward_val = reward_fun(client, instance_id, 
-                                    beta_vec = beta_init, 
-                                    time_step = time_step, 
-                                    render_display = F, 
-                                    break_option = break_option) %>% sum()
-    cat(complete_stack, 'stack completed\n')
-    if(complete_stack == complete_stack_lim) break
-  }
-  if(complete_stack == complete_stack_lim) break
-  
   ## Update
   a_k = 1/ (k+1)^alpha_val
   c_k = 1/ (k+1)^gamma_val
@@ -118,6 +88,37 @@ for(k in 1:episode_num)
   }
   gradient_vec = (beta_plus_reward - beta_minus_reward)/(2 * c_k) * delta_k
   beta_init = beta_init - a_k * hess_k_inv %*% gradient_vec
+  
+  ## Stopping rule
+  episode_reward_val = reward_fun(client, instance_id, 
+                                  beta_vec = beta_init, 
+                                  time_step = time_step, 
+                                  render_display = F, 
+                                  break_option = break_option) %>% sum()
+  
+  episode_reward_vec[k] = episode_reward_val
+  cat(k, 'step : ', episode_reward_val, '\n')  
+  if(min(episode_reward_vec) == episode_reward_val)
+  {
+    beta_star = beta_init
+  }else{
+    beta_init = beta_star
+  }
+  
+  complete_stack = 0
+  while(episode_reward_val == -time_step)
+  {
+    complete_stack = complete_stack + 1
+    episode_reward_val = reward_fun(client, instance_id, 
+                                    beta_vec = beta_init, 
+                                    time_step = time_step, 
+                                    render_display = F, 
+                                    break_option = break_option) %>% sum()
+    cat(complete_stack, 'stack completed\n')
+    if(complete_stack == complete_stack_lim) break
+  }
+  if(complete_stack == complete_stack_lim) break
+  
 }
 
 reward_fun(client, instance_id, beta_vec = beta_star, time_step = 500, render_display = T, break_option = F)
