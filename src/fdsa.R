@@ -25,7 +25,6 @@ beta_star = beta_init = rnorm(observation_dim)
 alpha_val = 0.602
 gamma_val = 0.101
 
-complete_stack = 0
 complete_stack_lim = 5
 
 episode_num = 100
@@ -35,9 +34,7 @@ break_option = ifelse(time_step <=200, T, F)
 
 for(k in 1:episode_num)
 {
-  a_k = 1/ (k+1)^alpha_val
-  c_k = 1/ (k+1)^gamma_val
-  
+  ## Stopping rule
   episode_reward_val = reward_fun(client, instance_id, 
                                   beta_vec = beta_init, 
                                   time_step = time_step, 
@@ -53,13 +50,22 @@ for(k in 1:episode_num)
     beta_init = beta_star
   }
   
-  if(episode_reward_val == -time_step) 
+  complete_stack = 0
+  while(episode_reward_val == -time_step)
   {
+    episode_reward_val = reward_fun(client, instance_id, 
+                                    beta_vec = beta_init, 
+                                    time_step = time_step, 
+                                    render_display = F, 
+                                    break_option = break_option) %>% sum()
     complete_stack = complete_stack + 1
     if(complete_stack == complete_stack_lim) break
-  }else{
-    complete_stack = 0
   }
+  if(complete_stack == complete_stack_lim) break
+  
+  ## Update
+  a_k = 1/ (k+1)^alpha_val
+  c_k = 1/ (k+1)^gamma_val
   
   plus_minus_mat = c_k * diag(1, nrow = observation_dim, ncol = observation_dim)
   beta_plus_mat = matrix(beta_init, nrow = observation_dim, ncol = observation_dim) + plus_minus_mat
