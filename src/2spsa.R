@@ -47,29 +47,29 @@ for(k in 1:episode_num)
   beta_plus = beta_init + c_k * delta_k
   beta_minus = beta_init - c_k * delta_k
   
-  beta_plus_reward = sum(reward_fun(client, instance_id, 
-                                    time_step = time_step, 
-                                    beta_vec = beta_plus, 
-                                    break_option = break_option))
+  beta_plus_reward = reward_fun(client, instance_id, 
+                                time_step = time_step, 
+                                beta_vec = beta_plus, 
+                                break_option = break_option) %>% sum()
   
-  beta_minus_reward = sum(reward_fun(client, instance_id, 
-                                     time_step = time_step, 
-                                     beta_vec = beta_minus, 
-                                     break_option = break_option))
+  beta_minus_reward = reward_fun(client, instance_id, 
+                                 time_step = time_step, 
+                                 beta_vec = beta_minus, 
+                                 break_option = break_option) %>% sum()
   
   beta_plus_tilde = beta_plus + tilde_c_k * tilde_delta_k
   beta_minus_tilde = beta_minus + tilde_c_k * tilde_delta_k
   
-  beta_plus_tilde_reward = sum(reward_fun(client, instance_id,
-                                          time_step = time_step,
-                                          beta_vec = beta_plus_tilde,
-                                          break_option = break_option))
+  beta_plus_tilde_reward = reward_fun(client, instance_id,
+                                      time_step = time_step,
+                                      beta_vec = beta_plus_tilde,
+                                      break_option = break_option) %>% sum()
   
   
-  beta_minus_tilde_reward = sum(reward_fun(client, instance_id,
-                                           time_step = time_step,
-                                           beta_vec = beta_minus_tilde,
-                                           break_option = break_option))
+  beta_minus_tilde_reward = reward_fun(client, instance_id,
+                                       time_step = time_step,
+                                       beta_vec = beta_minus_tilde,
+                                       break_option = break_option) %>% sum()
   
   beta_hess_plus = (beta_plus_tilde_reward - beta_plus_reward) / tilde_c_k * tilde_delta_k
   beta_hess_minus = (beta_minus_tilde_reward - beta_minus_reward) / tilde_c_k * tilde_delta_k

@@ -11,7 +11,7 @@ reward_fun = function(client, instance_id, beta_vec, time_step, render_display =
   for(i in 1:time_step)  ## time step
   {
     stat_next = env_step(client, instance_id, action, render = render_display)
-    action = action_fun(stat_next$observation, beta_init)
+    action = action_fun(stat_next$observation, beta_vec)
     reward_vec[i] = -stat_next$reward
     if(stat_next$done & break_option) break
   }

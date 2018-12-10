@@ -43,15 +43,15 @@ for(k in 1:episode_num)
   beta_plus = beta_init + c_k * delta_k
   beta_minus = beta_init - c_k * delta_k
   
-  beta_plus_reward = sum(reward_fun(client, instance_id, 
-                                    time_step = time_step, 
-                                    beta_vec = beta_plus, 
-                                    break_option = break_option))
+  beta_plus_reward = reward_fun(client, instance_id, 
+                                time_step = time_step, 
+                                beta_vec = beta_plus, 
+                                break_option = break_option) %>% sum()
   
-  beta_minus_reward = sum(reward_fun(client, instance_id, 
-                                     time_step = time_step, 
-                                     beta_vec = beta_minus, 
-                                     break_option = break_option))
+  beta_minus_reward = reward_fun(client, instance_id, 
+                                 time_step = time_step, 
+                                 beta_vec = beta_minus, 
+                                 break_option = break_option) %>% sum()
   
   gradient_vec = (beta_plus_reward - beta_minus_reward)/(2 * c_k) * delta_k
   beta_init = beta_init - a_k * gradient_vec
